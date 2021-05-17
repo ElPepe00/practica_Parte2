@@ -24,6 +24,18 @@ Supongamos  que los datos de la ciudad que ha sido asignada a cada grupo corresp
 aleatoria simple de todas las viviendas que se podrían alquilar en la ciudad.
 Utilizando esta muestra se pide:
 
+```{r, echo = FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r, echo=FALSE, message=FALSE}
+#Genera un data frame leido con tidyverse
+data_Madrid = read_csv("datos/listings.csv")
+
+# Muestra la variable price sin simbolos de dolar convertido a valor numerico
+data_Madrid$price = as.numeric(gsub(pattern="[\\$]|[,]",replacement="",data_Madrid$price))
+```
+
 
 ## Solición ejercicio 1
 
