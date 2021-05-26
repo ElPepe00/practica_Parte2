@@ -24,16 +24,35 @@ Supongamos  que los datos de la ciudad que ha sido asignada a cada grupo corresp
 aleatoria simple de todas las viviendas que se podrían alquilar en la ciudad.
 Utilizando esta muestra se pide:
 
+Cargamos los datos.
+
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, results='hide'}
 #Genera un data frame leido con tidyverse
 data_Madrid = read_csv("datos/listings.csv")
 
 # Muestra la variable price sin simbolos de dolar convertido a valor numerico
 data_Madrid$price = as.numeric(gsub(pattern="[\\$]|[,]",replacement="",data_Madrid$price))
+
+#Creamos otra tabla seleccionando diferentes variables y eliminando los valores NA
+df_Madrid = na.omit(data_Madrid %>% select(neighbourhood, host_name, host_location, price, id, bedrooms, beds, host_total_listings_count, accommodates, maximum_nights))
+
+head(df_Madrid)
+
+names(df_Madrid);
+
+# Creamos un vector con los nombres cambiados por orden que estan en el df_Madrid
+names(df_Madrid) = c("Vecindario", "Nombre_anfitrion", "Localizacion_anfitrion", "Precio", "ID", "Dormitorios", "Camas", "Recuento_total_listado_anfitrion", "Acomodados", "Maximo_de_noches");
+
+# Muestra el resultado del nuevo dataframe con nombres cambiados
+names(df_Madrid)
+```
+Los datos son:
+```{r}
+str(df_Madrid)
 ```
 
 
@@ -41,18 +60,55 @@ data_Madrid$price = as.numeric(gsub(pattern="[\\$]|[,]",replacement="",data_Madr
 
 1. Calcular una estimación puntual de la media para la variable `price` y el error estándar del estimador.
 
-```{r}
+El estimador de $\mu$ para el precio es $\overline{x}$ y su error estándar, como no conocemos $\sigma$ del precio es $\sigma_{\overline{x}}\approx\frac{\tilde{s}_x}{sqrt{n}}$, donde $n$ es el número de datos o el tamaño de la muestra
 
+```{r, echo=FALSE}
+#Media de la variable Precio
+media_precio = mean(df_Madrid$Precio)
+#SD de la variable Precio
+sd_precio = sd(df_Madrid$Precio)
+#Definimos n, como la longitud de la columna precio
+n = length(df_Madrid$Precio)
+#Calculamos el error estandar de la media del Precio
+error_estandar_media_precio = sd_precio/sqrt(n)
 ```
+
+```{r}
+media_precio
+sd_precio
+n
+error_estandar_media_precio
+```
+
+-   La media del Precio es `r media_precio` euros.
+
+-   El error estándar es $\frac{\tilde{s}_x}{\sqrt{n}}$ = `r error_estandar_media_precio`.
+
 
 
 ## Solición ejercicio 2
 
 2. Calcular un intervalo de confianza, al nivel de confianza del 95\%, para la variable `price`.
 
-```{r}
-
+```{r, echo=FALSE}
+#Obtenemos alpha y aplicamos la formula de intervalo de confianza
+alpha = 1-0.95
+intervalo_conf_precio = c(media_precio - qnorm(1-alpha/2) * sd_precio / sqrt(n), media_precio + qnorm(1-alpha/2) * sd_precio / sqrt(n))
 ```
+
+-   La función manualmente seria:
+$$
+\left(\overline{x}-Z_{1-\frac{\alpha}{2}}\cdot \frac{\tilde{S}}{\sqrt{n}},
+\overline{x}+Z_{1-\frac{\alpha}{2}}\cdot \frac{\tilde{S}}{\sqrt{n}})\right)
+$$
+```{r}
+alpha
+intervalo_conf_precio
+```
+
+-   El intervalo de confianza del 95% de la variable Price es: $`r intervalo_conf_precio`$
+
+
 
 ## Solición ejercicio 3
 
@@ -63,6 +119,8 @@ proporción de viviendas que tienen un `review_scores_rating` inferior a 95\%.
 
 ```
 
+
+
 ## Solición ejercicio 4
 
 4. Supongamos que un responsable de Airbnb asegura que la media de los valores de `review_scores_rating`
@@ -72,6 +130,8 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 
 ```
 
+
+
 ## Solición ejercicio 5
 
 5. Calcular el intervalo de confianza, con un nivel de confianza del 95\%, asociado al contraste del ejercicio anterior.
@@ -79,6 +139,8 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 ```{r}
 
 ```
+
+
 
 ## Solición ejercicio 6
 
@@ -89,6 +151,8 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 
 ```
 
+
+
 ## Solición ejercicio 7
 
 7. A partir de los resultados del apartado anterior contratad la hipótesis de que los precios medios en las dos ciudades son iguales.
@@ -96,6 +160,8 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 ```{r}
 
 ```
+
+
 
 ## Solición ejercicio 8
 
@@ -105,6 +171,8 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 
 ```
 
+
+
 ## Solición ejercicio 9
 
 9. Analizad  la dependencia entre las variables `Price` y `review_scores_rating` de la ciudad que tiene asignada. Seguid los siguientes pasos:
@@ -112,7 +180,7 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 ### a)
     * a) Seleccione del data frame las muestras que tienen valores diferentes de NA por las dos variables.
     
-    ```{r}
+```{r}
 
 ```
 
@@ -127,13 +195,13 @@ Los valores $\min$ y $\max$ son el mínimo y el máximo de la variable, respecti
 ### c)
     * c) Organizad los datos agrupados en intervalos en una tabla de contingencia `Price` versus `review_scores_rating` .
     
-    ```{r}
+```{r}
 
 ```
 
 ### d)
     * d) A partir de esta tabla haced un test $\chi^2$ de independencia para determinar si las dos variables son independientes, con un nivel de significación del 0.05.
     
-    ```{r}
+```{r}
 
 ```
