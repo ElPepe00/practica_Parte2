@@ -38,14 +38,14 @@ data_Madrid = read_csv("datos/listings.csv")
 data_Madrid$price = as.numeric(gsub(pattern="[\\$]|[,]",replacement="",data_Madrid$price))
 
 #Creamos otra tabla seleccionando diferentes variables y eliminando los valores NA
-df_Madrid = na.omit(data_Madrid %>% select(neighbourhood, host_name, host_location, price, id, bedrooms, beds, host_total_listings_count, accommodates, maximum_nights))
+df_Madrid = na.omit(data_Madrid %>% select(neighbourhood, host_name, host_location, price, id, bedrooms, beds, host_total_listings_count, accommodates, maximum_nights, review_scores_rating))
 
 head(df_Madrid)
 
 names(df_Madrid);
 
 # Creamos un vector con los nombres cambiados por orden que estan en el df_Madrid
-names(df_Madrid) = c("Vecindario", "Nombre_anfitrion", "Localizacion_anfitrion", "Precio", "ID", "Dormitorios", "Camas", "Recuento_total_listado_anfitrion", "Acomodados", "Maximo_de_noches");
+names(df_Madrid) = c("Vecindario", "Nombre_anfitrion", "Localizacion_anfitrion", "Precio", "ID", "Dormitorios", "Camas", "Recuento_total_listado_anfitrion", "Acomodados", "Maximo_de_noches", "Ratio_de_Revisiones_Puntuaciones");
 
 # Muestra el resultado del nuevo dataframe con nombres cambiados
 names(df_Madrid)
@@ -106,7 +106,7 @@ alpha
 intervalo_conf_precio
 ```
 
--   El intervalo de confianza del 95% de la variable Price es: $`r intervalo_conf_precio`$
+-   El intervalo de confianza del 95% de la variable Price es: $`r c(media_precio - qnorm(1-alpha/2) * sd_precio / sqrt(n), media_precio + qnorm(1-alpha/2) * sd_precio / sqrt(n))`$
 
 
 
@@ -115,9 +115,9 @@ intervalo_conf_precio
 3. Calcular un intervalo de confianza, al nivel de confianza del 99\%, para la
 proporción de viviendas que tienen un `review_scores_rating` inferior a 95\%.
 
-```{r}
-
+```{r, echo=FALSE}
 ```
+
 
 
 
@@ -126,7 +126,7 @@ proporción de viviendas que tienen un `review_scores_rating` inferior a 95\%.
 4. Supongamos que un responsable de Airbnb asegura que la media de los valores de `review_scores_rating`
 de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 
-```{r}
+```{r, echo=FALSE}
 
 ```
 
@@ -136,7 +136,7 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 
 5. Calcular el intervalo de confianza, con un nivel de confianza del 95\%, asociado al contraste del ejercicio anterior.
 
-```{r}
+```{r, echo=FALSE}
 
 ```
 
@@ -147,7 +147,7 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 6. Considera ahora los datos de `price` para la ciudad de New York del mes de febrero de 2020 ( están en http://insideairbnb.com/get-the-data.html, y debe pulsar en `show archived fecha ). Compararemos los valores de esta variable con los correspondientes a la ciudad que tiene asignada.
 Haga un contraste de hipótesis para decidir si las desviaciones típicas de los precios de las dos ciudades son iguales o diferentes. Considera que las distribuciones de los valores de precio en las poblaciones son normales.
 
-```{r}
+```{r, echo=FALSE}
 
 ```
 
@@ -157,7 +157,7 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 
 7. A partir de los resultados del apartado anterior contratad la hipótesis de que los precios medios en las dos ciudades son iguales.
 
-```{r}
+```{r, echo=FALSE}
 
 ```
 
@@ -167,7 +167,7 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 
 8. Utilice el test de Kolmogorov-Smirnov-Lilliefors para confirmar o rechazar la hipótesis de que la distribución de los valores de la variable `price` es normal, decidid el resultado del contraste  con el $p$-valor.
 
-```{r}
+```{r, echo=FALSE}
 
 ```
 
@@ -178,30 +178,30 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 9. Analizad  la dependencia entre las variables `Price` y `review_scores_rating` de la ciudad que tiene asignada. Seguid los siguientes pasos:
 
 ### a)
-    * a) Seleccione del data frame las muestras que tienen valores diferentes de NA por las dos variables.
+-   a) Seleccione del data frame las muestras que tienen valores diferentes de NA por las dos variables.
     
-```{r}
+```{r, echo=FALSE}
 
 ```
 
 ### b)
-    * b) A continuación agrupau los valores de cada variable utilizando los intervalos siguientes: $[ \min, Q_1), [Q_1, Q_2), [Q_2, Q_3)$ y $[Q_3, \max]$.
+-   b) A continuación agrupau los valores de cada variable utilizando los intervalos siguientes: $[ \min, Q_1), [Q_1, Q_2), [Q_2, Q_3)$ y $[Q_3, \max]$.
 Los valores $\min$ y $\max$ son el mínimo y el máximo de la variable, respectivamente. Mientras que $Q_1$, $Q_2$ y $Q_3$· representan los cuartiles primero, segundo (mediana) y tercero. Si los valor mínimo y máximo de algún intervalo son iguales elimine este intervalo.
 
-```{r}
+```{r, echo=FALSE}
 
 ```
 
 ### c)
-    * c) Organizad los datos agrupados en intervalos en una tabla de contingencia `Price` versus `review_scores_rating` .
+-   c) Organizad los datos agrupados en intervalos en una tabla de contingencia `Price` versus `review_scores_rating` .
     
-```{r}
+```{r, echo=FALSE}
 
 ```
 
 ### d)
-    * d) A partir de esta tabla haced un test $\chi^2$ de independencia para determinar si las dos variables son independientes, con un nivel de significación del 0.05.
+-   d) A partir de esta tabla haced un test $\chi^2$ de independencia para determinar si las dos variables son independientes, con un nivel de significación del 0.05.
     
-```{r}
+```{r, echo=FALSE}
 
 ```
