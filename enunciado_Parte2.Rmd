@@ -24,10 +24,12 @@ Supongamos  que los datos de la ciudad que ha sido asignada a cada grupo corresp
 aleatoria simple de todas las viviendas que se podrían alquilar en la ciudad.
 Utilizando esta muestra se pide:
 
+## Carga de datos
 Cargamos los datos.
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(epitools)
 ```
 
 ```{r, echo=FALSE, message=FALSE, results='hide'}
@@ -56,7 +58,7 @@ str(df_Madrid)
 ```
 
 
-## Solición ejercicio 1
+## Solución ejercicio 1
 
 1. Calcular una estimación puntual de la media para la variable `price` y el error estándar del estimador.
 
@@ -86,7 +88,7 @@ error_estandar_media_precio
 
 
 
-## Solición ejercicio 2
+## Solución ejercicio 2
 
 2. Calcular un intervalo de confianza, al nivel de confianza del 95\%, para la variable `price`.
 
@@ -110,18 +112,30 @@ intervalo_conf_precio
 
 
 
-## Solición ejercicio 3
+## Solución ejercicio 3
 
 3. Calcular un intervalo de confianza, al nivel de confianza del 99\%, para la
 proporción de viviendas que tienen un `review_scores_rating` inferior a 95\%.
 
 ```{r, echo=FALSE}
+# Suma total de la variable Revisiones
+SumTot = sum(table(df_Madrid$Ratio_de_Revisiones_Puntuaciones))
+Sum95 = sum(df_Madrid$Ratio_de_Revisiones_Puntuaciones<95)
 ```
 
+-   Intervalo de confianza del 75\%, con la proporción inferior al 95\%
+```{r, echo=FALSE}
+binom.wilson(Sum95,SumTot,0.75)
+```
+
+-   Valor inferior del intervalo: $`r binom.wilson(Sum95,SumTot,0.75)$lower`$,
+
+-   Valor superior del intervalo: $`r binom.wilson(Sum95,SumTot,0.75)$upper`$
 
 
 
-## Solición ejercicio 4
+
+## Solución ejercicio 4
 
 4. Supongamos que un responsable de Airbnb asegura que la media de los valores de `review_scores_rating`
 de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
@@ -132,7 +146,7 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 
 
 
-## Solición ejercicio 5
+## Solución ejercicio 5
 
 5. Calcular el intervalo de confianza, con un nivel de confianza del 95\%, asociado al contraste del ejercicio anterior.
 
@@ -142,38 +156,113 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 
 
 
-## Solición ejercicio 6
+## Solución ejercicio 6
 
 6. Considera ahora los datos de `price` para la ciudad de New York del mes de febrero de 2020 ( están en http://insideairbnb.com/get-the-data.html, y debe pulsar en `show archived fecha ). Compararemos los valores de esta variable con los correspondientes a la ciudad que tiene asignada.
 Haga un contraste de hipótesis para decidir si las desviaciones típicas de los precios de las dos ciudades son iguales o diferentes. Considera que las distribuciones de los valores de precio en las poblaciones son normales.
 
+```{r, echo=FALSE, message=FALSE, results='hide'}
+# Leemos el listings y creamos un dataframe
+data_NewYork = read_csv("datos/listingsNYC.csv")
+
+# Muestra la variable price sin simbolos de dolar convertido a valor numerico
+data_NewYork$price = as.numeric(gsub(pattern="[\\$]|[,]",replacement="",data_NewYork$price))
+
+#Creamos otra tabla seleccionando diferentes variables y eliminando los valores NA
+df_NY = na.omit(data_NewYork %>% select(price))
+
+# Creamos un vector con los nombres cambiados por orden que estan en el df_Madrid
+names(df_NY) = c("Precio");
+```
+
+Cargamos los datos en un nuevo dataframe con la variable `Precio`:
+```{r, echo=FALSE}
+# Muestra el resultado del nuevo dataframe con nombres cambiados
+names(df_NY)
+```
+
+Calculamos las desviaciones típicas:
+
+$$
+\left\{
+\begin{array}{ll}
+H_{0}: &  \sigma_{Madrid}=\sigma_{NY}\\
+H_{1}: &  \sigma_{Madrid}\neq\sigma_{NY}
+\end{array}
+\right.
+$$
+
 ```{r, echo=FALSE}
 
+media_precio_mad = mean(df_Madrid$Precio)
+media_precio_ny = mean(df_NY$Precio)
+
+n_precio_mad = length(df_Madrid$Precio)
+n_precio_mad = length(df_NY$Precio)
+
+desv_tip_madrid = sd(df_Madrid$Precio, na.rm = TRUE)
+desv_tip_ny = sd(df_NY$Precio, na.rm = TRUE)
+
+contraste_precios = t.test(df_Madrid$Precio, df_NY$Precio, alternative = "two.sided")
+
+```
+Desviación típica del precio en Madrid: $`r desv_tip_madrid`$
+
+Desviación típica del precion en Nueva York: $`r desv_tip_ny`$
+
+Aplicando el contraste de hipotesis podemos obervar que las desviaciones típicas son bastante diferentes:
+
+$\tilde{S}_{Madrid} = `r desv_tip_madrid`  >  \tilde{S}_{NY} = `r desv_tip_ny`$
+
+
+
+## Solución ejercicio 7
+
+7. A partir de los resultados del apartado anterior contrastad la hipótesis de que los precios medios en las dos ciudades son iguales.
+
+Para ello vamos a aplicar el siguiente contraste:
+$$
+\left\{
+\begin{array}{ll}
+H_{0}: &  \mu=\mu_0\\
+H_{1}: & \mu\neq\mu_0
+\end{array}
+\right.
+$$
+
+```{r, echo=FALSE}
+contraste_medias = t.test(df_Madrid$Precio, df_NY$Precio, alternative="two.side", var.equal=FALSE, conf.level=0.95)
+contraste_medias
+```
+El p-valor:
+```{r, echo=FALSE}
+contraste_medias$p.value
+```
+El intervalo de confianza:
+```{r, echo=FALSE}
+contraste_medias$conf.int
 ```
 
 
 
-## Solición ejercicio 7
-
-7. A partir de los resultados del apartado anterior contratad la hipótesis de que los precios medios en las dos ciudades son iguales.
-
-```{r, echo=FALSE}
-
-```
-
-
-
-## Solición ejercicio 8
+## Solución ejercicio 8
 
 8. Utilice el test de Kolmogorov-Smirnov-Lilliefors para confirmar o rechazar la hipótesis de que la distribución de los valores de la variable `price` es normal, decidid el resultado del contraste  con el $p$-valor.
 
 ```{r, echo=FALSE}
+##mu y sigma se pasan del apartado anterior
+sum(table(df_Madrid$Precio))
 
+round(c(contraste_medias, contraste_precios),3)
+ks.test(data_Madrid$price, "pnorm", contraste_medias, contraste_precios)
+length(unique(df_Madrid$Precio))
+1-length(unique(df_Madrid$Precio))/length(df_Madrid$Precio)
+##Por tanto, el vector (de 20156 entradas)  solo tiene 576 valores diferentes. El resto, un 97.14%, son valores rep
 ```
 
 
 
-## Solición ejercicio 9
+## Solución ejercicio 9
 
 9. Analizad  la dependencia entre las variables `Price` y `review_scores_rating` de la ciudad que tiene asignada. Seguid los siguientes pasos:
 
@@ -181,27 +270,74 @@ Haga un contraste de hipótesis para decidir si las desviaciones típicas de los
 -   a) Seleccione del data frame las muestras que tienen valores diferentes de NA por las dos variables.
     
 ```{r, echo=FALSE}
-
+# Seleccionamos las variables Precio y Ratio de Revisiones y las metemos a un nuevo dataframe
+# Omitimos todos los valores NA
+df_ejercicio9 <- na.omit(df_Madrid %>% select(Precio, Ratio_de_Revisiones_Puntuaciones))
+# Mostramos las dos variables
+names(df_ejercicio9)
 ```
 
 ### b)
--   b) A continuación agrupau los valores de cada variable utilizando los intervalos siguientes: $[ \min, Q_1), [Q_1, Q_2), [Q_2, Q_3)$ y $[Q_3, \max]$.
+-   b) A continuación agrupad los valores de cada variable utilizando los intervalos siguientes: $[ \min, Q_1), [Q_1, Q_2), [Q_2, Q_3)$ y $[Q_3, \max]$.
 Los valores $\min$ y $\max$ son el mínimo y el máximo de la variable, respectivamente. Mientras que $Q_1$, $Q_2$ y $Q_3$· representan los cuartiles primero, segundo (mediana) y tercero. Si los valor mínimo y máximo de algún intervalo son iguales elimine este intervalo.
 
 ```{r, echo=FALSE}
+# Obtenemos los mínimos y máximos de las dos variables
+min_Precio = min(df_ejercicio9$Precio)
+max_Precio = max(df_ejercicio9$Precio)
+
+min_Revisiones = min(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones)
+max_Revisiones = max(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones)
+
+# Obtenemos los quantiles de las dos variables
+Q1_Precio = quantile(df_ejercicio9$Precio, probs = 0.25)
+Q2_Precio = quantile(df_ejercicio9$Precio, probs = 0.5)
+Q3_Precio = quantile(df_ejercicio9$Precio, probs = 0.75)
+
+Q1_Revisiones = quantile(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones, probs = 0.25)
+Q2_Revisiones = quantile(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones, probs = 0.5)
+Q3_Revisiones = quantile(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones, probs = 0.75)
+
+# Creamos las tablas con los intervalos correspondientes al enunciado
+valores_agrupados_Precio <- table(cut(df_ejercicio9$Precio, breaks = c(min_Precio, Q1_Precio, Q2_Precio, Q3_Precio, max_Precio)))
+valores_agrupados_Revisiones <- table(cut(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones, breaks = c(min_Revisiones, Q1_Revisiones, Q2_Revisiones, Q3_Revisiones, max_Revisiones)))
 
 ```
+
+Valores agrupados de la variable `Price`
+```{r, echo=FALSE}
+# Mostramos la tabla
+valores_agrupados_Precio
+```
+
+Valores agrupados de la variable `Ratio_de_Revisiones_Puntuaciones`
+```{r, echo=FALSE}
+# Mostramos la tabla
+valores_agrupados_Revisiones
+```
+
 
 ### c)
 -   c) Organizad los datos agrupados en intervalos en una tabla de contingencia `Price` versus `review_scores_rating` .
     
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center'}
+# Crear la tabla de contingencia
+# tabla_contingencia <- table(valores_agrupados_Precio, valores_agrupados_Revisiones)
+tabla_contingencia <- table(cut(df_ejercicio9$Precio, breaks = c(min_Precio, Q1_Precio, Q2_Precio, Q3_Precio, max_Precio)), cut(df_ejercicio9$Ratio_de_Revisiones_Puntuaciones, breaks = c(min_Revisiones, Q1_Revisiones, Q2_Revisiones, Q3_Revisiones, max_Revisiones)))
 
+tabla_contingencia
+
+# Creamos dos barplot para mas claredad
+barplot(valores_agrupados_Precio, xlab = "Intervalo de Precios", ylab = "Frecuencia", main = "Gráfico de barras - Precio")
+barplot(valores_agrupados_Revisiones, xlab = "Intervalo de Recuento de Revisiones por Putuación", ylab = "Frecuencia", main = "Gráfico de barras - Revisiones")
 ```
 
 ### d)
 -   d) A partir de esta tabla haced un test $\chi^2$ de independencia para determinar si las dos variables son independientes, con un nivel de significación del 0.05.
-    
-```{r, echo=FALSE}
 
+Los valores del test de independencia son:
+```{r, echo=FALSE, warning=FALSE}
+#Test de independencia de chi quadrado de la tabla anterior
+chisq.test(tabla_contingencia)
 ```
+Como podemos observar los valores son casi 0, por lo qual son independientes.
