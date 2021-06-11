@@ -294,26 +294,28 @@ pre code {
 <p><span class="math display">\[
 \left\{
 \begin{array}{ll}
-H_{0}: &amp;  \tilde{S}_{Madrid}=\tilde{S}_{NY}\\
-H_{1}: &amp;  \tilde{S}_{Madrid}\neq\tilde{S}_{NY}
+H_{0}: &amp;  \sigma_{Madrid}=\sigma_{New York}\\
+H_{1}: &amp;  \sigma_{Madrid}\neq\sigma_{NewYork}
 \end{array}
 \right.
 \]</span></p>
 <p>Desviación típica del precio en Madrid: <span class="math inline">\(416.2281517\)</span></p>
 <p>Desviación típica del precion en Nueva York: <span class="math inline">\(275.7409867\)</span></p>
-<p>Aplicando el contraste de hipotesis podemos obervar que las desviaciones típicas son bastante diferentes:</p>
-<p><span class="math inline">\(\tilde{S}_{Madrid} = 416.2281517 &gt; \tilde{S}_{NY} = 275.7409867\)</span></p>
+<p>Aplicando el contraste de hipotesis podemos obervar que las desviaciones típicas son bastante diferentes y el p-Valor sale muy pequeño, con ello podemos rechazar la hiposesis nula de que las dos desviaciones típicas son iguales.</p>
+<ul>
+<li>p-Valor ≈ <span class="math inline">\(0\)</span></li>
+</ul>
 </div>
 <div id="solución-ejercicio-7" class="section level2" number="1.8">
 <h2 number="1.8"><span class="header-section-number">1.8</span> Solución ejercicio 7</h2>
 <ol start="7" style="list-style-type: decimal">
 <li>A partir de los resultados del apartado anterior contrastad la hipótesis de que los precios medios en las dos ciudades son iguales.</li>
 </ol>
-<p>Para ello vamos a aplicar el siguiente contraste: <span class="math display">\[
+<p>Para ello vamos a aplicar el siguiente contraste de hipótesis: <span class="math display">\[
 \left\{
 \begin{array}{ll}
-H_{0}: &amp;  \mu=\mu_0\\
-H_{1}: &amp; \mu\neq\mu_0
+H_{0}: &amp;  \mu_{Madrid}=\mu_{NewYork}\\
+H_{1}: &amp; \mu_{Madrid}\neq\mu_{NewYork}
 \end{array}
 \right.
 \]</span></p>
@@ -328,16 +330,28 @@ H_{1}: &amp; \mu\neq\mu_0
 ## sample estimates:
 ## mean of x mean of y 
 ##  95.85542 142.84224</code></pre>
-<pre><code>## [1] 1.445779e-23</code></pre>
-<pre><code>## [1] -56.17032 -37.80332
-## attr(,&quot;conf.level&quot;)
-## [1] 0.95</code></pre>
+<p>El precio medio de Madird es: <span class="math inline">\(95.8554203\)</span></p>
+<p>El precio medio de Nueva York es: <span class="math inline">\(142.8422404\)</span></p>
+<p>El p-valor es: <span class="math inline">\(1.4457792\times 10^{-23}\)</span> , como vemos el valor es muy pequeño por lo que podemos rechazar la hipótesis nula para la iguldad de medias.</p>
 </div>
 <div id="solución-ejercicio-8" class="section level2" number="1.9">
 <h2 number="1.9"><span class="header-section-number">1.9</span> Solución ejercicio 8</h2>
 <ol start="8" style="list-style-type: decimal">
 <li>Utilice el test de Kolmogorov-Smirnov-Lilliefors para confirmar o rechazar la hipótesis de que la distribución de los valores de la variable <code>price</code> es normal, decidid el resultado del contraste con el <span class="math inline">\(p\)</span>-valor.</li>
 </ol>
+<p>Valor de <span class="math inline">\(\mu\)</span> = <span class="math inline">\(95.8554203\)</span></p>
+<p>Valor de <span class="math inline">\(\sigma\)</span> = <span class="math inline">\(416.2281517\)</span></p>
+<p>El test Kolmogorov-Smirnov-Lilliefors:</p>
+<pre><code>## Warning in ks.test(df_Madrid$Precio, &quot;pnorm&quot;, mean = mu, sd = sigma): ties
+## should not be present for the Kolmogorov-Smirnov test</code></pre>
+<pre><code>## 
+##  One-sample Kolmogorov-Smirnov test
+## 
+## data:  df_Madrid$Precio
+## D = 0.41735, p-value &lt; 2.2e-16
+## alternative hypothesis: two-sided</code></pre>
+<p>Podemos observar que el p-valor es casi: <span class="math inline">\(0\)</span> , es muy pequeño y con ello podemos rechazar la hipótesis de que la distribución de los valores de la variable <code>price</code> es normal.</p>
+<p>Finalmente, obervamos los valores únicos de la variable Precio: <span class="math inline">\(349\)</span> y el porcentaje de los valores repetidos: <span class="math inline">\(95.9921911\)</span>%. Con todo ello podemos fiabilizar el test porque hay pocos empates.</p>
 </div>
 <div id="solución-ejercicio-9" class="section level2" number="1.10">
 <h2 number="1.10"><span class="header-section-number">1.10</span> Solución ejercicio 9</h2>

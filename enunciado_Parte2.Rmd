@@ -30,6 +30,7 @@ Cargamos los datos.
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(epitools)
+library(TeachingDemos)
 ```
 
 ```{r, echo=FALSE, message=FALSE, results='hide'}
@@ -186,8 +187,8 @@ Calculamos las desviaciones típicas:
 $$
 \left\{
 \begin{array}{ll}
-H_{0}: &  \sigma_{Madrid}=\sigma_{NY}\\
-H_{1}: &  \sigma_{Madrid}\neq\sigma_{NY}
+H_{0}: &  \sigma_{Madrid}=\sigma_{New York}\\
+H_{1}: &  \sigma_{Madrid}\neq\sigma_{NewYork}
 \end{array}
 \right.
 $$
@@ -203,16 +204,15 @@ n_precio_mad = length(df_NY$Precio)
 desv_tip_madrid = sd(df_Madrid$Precio, na.rm = TRUE)
 desv_tip_ny = sd(df_NY$Precio, na.rm = TRUE)
 
-contraste_precios = t.test(df_Madrid$Precio, df_NY$Precio, alternative = "two.sided")
-
+contraste_hipotesis_mad_ny = var.test(df_Madrid$Precio, df_NY$Precio, alternative = "two.sided")
 ```
 Desviación típica del precio en Madrid: $`r desv_tip_madrid`$
 
 Desviación típica del precion en Nueva York: $`r desv_tip_ny`$
 
-Aplicando el contraste de hipotesis podemos obervar que las desviaciones típicas son bastante diferentes:
+Aplicando el contraste de hipotesis podemos obervar que las desviaciones típicas son bastante diferentes y el p-Valor sale muy pequeño, con ello podemos rechazar la hiposesis nula de que las dos desviaciones típicas son iguales.
 
-$\tilde{S}_{Madrid} = `r desv_tip_madrid`  >  \tilde{S}_{NY} = `r desv_tip_ny`$
+-   p-Valor ≈ $`r contraste_hipotesis_mad_ny$p.value`$
 
 
 
@@ -220,28 +220,25 @@ $\tilde{S}_{Madrid} = `r desv_tip_madrid`  >  \tilde{S}_{NY} = `r desv_tip_ny`$
 
 7. A partir de los resultados del apartado anterior contrastad la hipótesis de que los precios medios en las dos ciudades son iguales.
 
-Para ello vamos a aplicar el siguiente contraste:
+Para ello vamos a aplicar el siguiente contraste de hipótesis:
 $$
 \left\{
 \begin{array}{ll}
-H_{0}: &  \mu=\mu_0\\
-H_{1}: & \mu\neq\mu_0
+H_{0}: &  \mu_{Madrid}=\mu_{NewYork}\\
+H_{1}: & \mu_{Madrid}\neq\mu_{NewYork}
 \end{array}
 \right.
 $$
 
 ```{r, echo=FALSE}
-contraste_medias = t.test(df_Madrid$Precio, df_NY$Precio, alternative="two.side", var.equal=FALSE, conf.level=0.95)
+contraste_medias = t.test(df_Madrid$Precio, df_NY$Precio, alternative="two.side", var.equal=FALSE)
 contraste_medias
 ```
-El p-valor:
-```{r, echo=FALSE}
-contraste_medias$p.value
-```
-El intervalo de confianza:
-```{r, echo=FALSE}
-contraste_medias$conf.int
-```
+El precio medio de Madird es: $`r media_precio_mad`$
+
+El precio medio de Nueva York es: $`r media_precio_ny`$
+
+El p-valor es: $`r contraste_medias$p.value`$ , como vemos el valor es muy pequeño por lo que podemos rechazar la hipótesis nula para la iguldad de medias.
 
 
 
@@ -249,16 +246,32 @@ contraste_medias$conf.int
 
 8. Utilice el test de Kolmogorov-Smirnov-Lilliefors para confirmar o rechazar la hipótesis de que la distribución de los valores de la variable `price` es normal, decidid el resultado del contraste  con el $p$-valor.
 
-```{r, echo=FALSE}
-##mu y sigma se pasan del apartado anterior
+```{r, echo=FALSE, results='hide'}
 sum(table(df_Madrid$Precio))
+mu = media_precio_mad
+sigma = desv_tip_madrid
+round(c(mu,sigma),3)
+```
 
-round(c(contraste_medias, contraste_precios),3)
-ks.test(data_Madrid$price, "pnorm", contraste_medias, contraste_precios)
-length(unique(df_Madrid$Precio))
-1-length(unique(df_Madrid$Precio))/length(df_Madrid$Precio)
+Valor de $\mu$ = $`r mu`$
+
+Valor de $\sigma$ = $`r sigma`$
+
+El test Kolmogorov-Smirnov-Lilliefors:
+```{r echo=FALSE}
+test_ks = ks.test(df_Madrid$Precio, "pnorm", mean = mu, sd = sigma)
+test_ks
+```
+Podemos observar que el p-valor es casi: $`r test_ks$p.value`$ , es muy pequeño y con ello podemos rechazar la hipótesis de que la distribución de los valores de la variable `price` es normal.
+
+```{r, echo=FALSE, results='hide'}
+valores_diferentes = length(unique(df_Madrid$Precio))
+valores_repetidos = 1-length(unique(df_Madrid$Precio))/length(df_Madrid$Precio)
+n_ej8 = valores_repetidos*100
 ##Por tanto, el vector (de 20156 entradas)  solo tiene 576 valores diferentes. El resto, un 97.14%, son valores rep
 ```
+
+Finalmente, obervamos los valores únicos de la variable Precio: $`r valores_diferentes`$ y el porcentaje de los valores repetidos: $`r n_ej8`$\%. Con todo ello podemos fiabilizar el test porque hay pocos empates.
 
 
 
