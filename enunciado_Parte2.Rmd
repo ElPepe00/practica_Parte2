@@ -1,6 +1,6 @@
 ---
-title: "Proyecto asignatura  Estadística (MAT3) GIN2 Grupos 1 y 3: PARTE 2. CUrso 2020-2021"
-author: 'Antoni, Pol Martínez; Josep, Oliver Vallespir; Gabriel, Riutort Álvarez; Jorge, Oliveras Hidalgo'
+title: "Proyecto asignatura  Estadística (MAT3) GIN2 Grupos 1 y 3: PARTE 2. Curso 2020-2021"
+author: ' Antoni, Pol Martínez; Josep, Oliver Vallespir; Gabriel, Riutort Álvarez '
 date: '15/06/2021'
 output:
   html_document: 
@@ -29,6 +29,7 @@ Cargamos los datos.
 
 ```{r, echo = FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
+library(dplyr)
 library(epitools)
 library(TeachingDemos)
 ```
@@ -142,7 +143,23 @@ binom.wilson(Sum95,SumTot,0.75)
 de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 
 ```{r, echo=FALSE}
+#Eliminamos todos los datos duplicados
+unique(df_Madrid)
 
+#Calculamos la media del `review_scores_rating`
+media_ratio <- mean(df_Madrid$Ratio_de_Revisiones_Puntuaciones)
+#nos sale que la media es de 93.38, por tanto es falso
+
+#Tambien vamos a calcular la media del `review_scores_rating` 
+# de cada Vecindario por separado
+    
+review_madrid <-df_Madrid %>% group_by(Vecindario) %>% summarise(media_review = mean(Ratio_de_Revisiones_Puntuaciones))
+ 
+#Y aqui vamos a contar los Vecindarios donde la media de su 
+#`review_scores_rating` sea mayor o igual a 95
+ 
+review_madrid %>% filter(media_review >= 95) %>% summarise(conteo = n())
+  #Nos quedan n=16 Vivendas
 ```
 
 
@@ -152,7 +169,23 @@ de las viviendas de su portal es superior a 95. Contrastad esta hipótesis.
 5. Calcular el intervalo de confianza, con un nivel de confianza del 95\%, asociado al contraste del ejercicio anterior.
 
 ```{r, echo=FALSE}
+#SD de la variable Ratio_de_Revisiones_Puntuaciones
+sd_ratio <- sd(df_Madrid$Ratio_de_Revisiones_Puntuaciones)
 
+#Definimos n, como la longitud de la columna
+#Ratio_de_Revisiones_Puntuaciones
+n5 = length(df_Madrid$Ratio_de_Revisiones_Puntuaciones)
+
+#Calculamos el error estandar de la media del 
+#Ratio_de_Revisiones_Puntuaciones
+
+error_estandar_media_ratio = sd_ratio/sqrt(n5)
+
+#Obtenemos alpha y aplicamos la formula de intervalo de confianza
+alpha5 = 1-0.95
+intervalo_conf_ratio <- c(media_ratio - qnorm(1-alpha5/2) * sd_ratio / sqrt(n5), media_ratio + qnorm(1-alpha5/2) * sd_ratio / sqrt(n5))
+
+intervalo_conf_ratio
 ```
 
 
